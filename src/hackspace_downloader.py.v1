@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+
+######################################################################
+# Desc: download raspi hackspace magazine pdfs from a range based on issue number
+# Author: Alvin Salalila
+# Date: Sep 17 2023
+######################################################################
+
+import requests, os, time
+from bs4 import BeautifulSoup
+from multiprocessing import Pool
+
+
+# example path to download "https://magpi.raspberrypi.com/issues/21/pdf/download"
+# globals variables
+BASEURL = 'https://hackspace.raspberrypi.com'
+ISSUESPATH = '/issues/'
+DOWNLOADPATH = '/pdf/download'
+STARTINGISSUE = 1  # start at 
+LASTISSUE = 69     # end at
+PROCESSES = 10      # how many at a time
+
+########## function creates a list of urls to download
+def retrieveAllURLs():
+
+    fileurllist = []
+    #### one at a time ###    
+    for issuenum in range(STARTINGISSUE, LASTISSUE + 1): 
+        issuenum = "%02d" % (issuenum,)
+        absurl = BASEURL + ISSUESPATH + issuenum + DOWNLOADPATH
+        fileurllist.append(getsource(absurl))
+
+    print(f"The download list - {fileurllist}")
+    return fileurllist
+
+
+########## function extracts the iframe source from html page
+def getsource(sourceurl):
+
+    response = requests.get(sourceurl, stream=True)
+    soup=BeautifulSoup(response.content,'html.parser')
+    iframes=soup.find_all('iframe')
+    for iframe in iframes:
+        src=iframe['src']
+    src = BASEURL + src
+    return src
+
+
+def downloader(myfile):
+    # use wget to get the files
+    # print(f'getting {myfile}')
+    wget = "wget -q --show-progress --no-use-server-timestamps "
+    os.system(wget + myfile)
+
+
+def main():
+
+### single thread wgets
+
+#   for i in retrieveAll():
+#        downloader(i)
+
+### parallel wgets based on PROCESSES global var
+    filelist = retrieveAllURLs()
+    with Pool(PROCESSES) as p:
+        p.map(downloader,filelist) 
+
+
+if __name__ == "__main__":
+    start_time = time.time()
+    main()
+    print(f'time to finish {format(time.time() - start_time)}')
