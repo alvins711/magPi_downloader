@@ -30,7 +30,7 @@ def retrieveAllURLs():
         issuenum = "%02d" % (issuenum,)
         absurl = BASEURL + ISSUESPATH + issuenum + DOWNLOADPATH
         fileurllist.append(getsource(absurl))
-        print(f"issue {issuenum} - {fileurllist}")
+        print(f"issue {issuenum} - {fileurllist[-1]}")
 
     return fileurllist
 
