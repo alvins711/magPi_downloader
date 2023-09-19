@@ -10,12 +10,14 @@ hackspace_downloader.py - downloads magazine issues of Hackspace magazine
 # Usage
 Install the following Python modules:
 
-    pip3 install requestse here
+    pip3 install requests
+
     pip3 install beautifulsoup4
 
 Run the script:
 
     magpi_downloader.py
+ 
     hackspace_downloader.py
 
 By Default it will download all issues starting from the 1st to 129 of MagPi and issue 1 to 
